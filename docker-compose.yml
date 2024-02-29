@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: phpMyAdmin_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: pma_root
+      MYSQL_DATABASE: pma_db
+      MYSQL_USER: pma_user
+      MYSQL_PASSWORD: pma_pass
+    image: mysql:8.0
+    command: --max_allowed_packet=536870912
+    ports:
+      - 33060:3306
+    restart: "always"
+    volumes:
+      - ./db_data:/var/lib/mysql:delegated
+
+  phpmyadmin:
+    container_name: phpMyAdmin_phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: pma_root
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 512M
+    image: phpmyadmin
+    links:
+      - db
+    ports:
+      - 8080:80
+    restart: "always"
+
+volumes:
+  db_data:
